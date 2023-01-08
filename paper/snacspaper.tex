@@ -3,7 +3,7 @@
   \providecommand\BibTeX{{%
     \normalfont B\kern-0.5em{\scshape i\kern-0.25em b}\kern-0.8em\TeX}}}
 \setcopyright{rightsretained}
-\acmConference[SNACS '22]{Social Network Analysis for Computer Scientists Course 2022}{Master CS, Fall 2022}{Leiden, the Netherlands}
+\acmConference[QA '22]{Quantum Algorithms Course 2022}{Master CS, Fall 2022}{Leiden, the Netherlands}
 \copyrightyear{2022}
 \acmYear{2022}
 \acmISBN{}
@@ -14,25 +14,25 @@
 \begin{document}
 
 \title{Your Original and Relevant Course Project Title}
-\subtitle{ Social Network Analysis for Computer Scientists --- Course paper} % do not modify thi
+\subtitle{Quantum Algorithms --- Course paper} % do not modify thi
 
-\author{Student name 1}
+\author{Chenyu Shi}
 %\orcid{0000-0001-5468-1030}
-\email{student2@umail.leidenuniv.nl}
+\email{s3500063@umail.leidenuniv.nl}
 \affiliation{
   \institution{LIACS, Leiden University}
   \city{Leiden}
   \country{Netherlands}}
 
-\author{Student name 2}
+\author{Shupei Li}
 %\orcid{0000-0001-5468-1030}
-\email{student2@umail.leidenuniv.nl}
+\email{s3430863@umail.leidenuniv.nl}
 \affiliation{
   \institution{LIACS, Leiden University}
   \city{Leiden}  
   \country{Netherlands}}
 
-\renewcommand{\shortauthors}{Lastname1 and Lastname2}
+\renewcommand{\shortauthors}{Shi and Li}
 
 \keywords{keyword1, keyword2, keyword3, social network analysis, network science}
 
@@ -48,11 +48,26 @@
 
 % textual description of the context, the problem considered, why it is important, how it is addressed in other works, and what real-world applications are. end with a paragraph on what the contributions of the paper are (so, which problems you solve or which research questions you address), and finally a paragraph on how the remainder of the paper is organized.
 
-\section{Related work}
+In this paper, we consider the classification problem from the perspective of quantum algorithms. Classification is an important data analysis task in machine learning field, where a lot of algorithms designed for classical computers have been developed. However, the volume and the variety of data have been growing rapidly in recent several decades. To handle the high-dimensional data with complicated features, we need more advanced techiques and more powerful computers. Developments in quantum computing provide a possible solution for the big data challenge --- introducing quantum algorithms into machine learning to obtain the quantum speedups. In theory, quantum machine learning algorithms outperform classical algorithms by leveraging quantum phenomena (e.g. entanglement and coherence) to reduce the time complexity of information processing and analysis \cite{biamonte2017}. Researchers have successfully designed the quantum version of several machine learning algorithms and implemented them on quantum computers, including both supervised learning and unsupervised learning. For example, Lu and Braunstein proposed the quantum decision tree algorithm based on the quantum fidelity metric \cite{lu2013}. Lloyd et al. performed k-means algorithm with the quantum version of Lloyd’s algorithm \cite{lloyd2013}. There are also attempts to generalize the deep neural networks to quantum computers \cite{qnn2018}. In our project, we focus on using the quantum version of support vector machines (SVMs) to solve the supervised classification problem.
 
+Classical SVMs are widely used in image classification, text mining, etc. The SVM constructs nonlinear decision boundaries by first transforming the feature space and then learning linear boundaries on the transformed space from data. To develop quantum SVMs, we need to map the data into a quantum space and create the corresponding quantum circuits. Havl{\'\i}{\v{c}}ek et al. \cite{havlivcek2019supervised} proposed two strategies to build the quantum SVM model. One strategy is optimizing a variational quantum circuit that is also known as the parametrized quantum circuit. The other is estimating the quantum kernel. Considering the limitations of quantem kernel estimator, we investigate the variational quantum circuit in experiments.
+
+There is a problem in the construction of variational quantum circuits --- the limited number of qubits. Although quantum computers have enormous potential of fast computing, the Noisy Intermediate-Scale Quantum (NISQ) devices suffer from non-negligible noise and limited qubit counts \cite{tang2021}. Therefore, it is meaningful to decompose a large quantum circuit into smaller ones that can be deployed on NISQ devices while maintaining the comparable performance to the original circuit. In the project, we try to simulate the large variational quantum classifier with multiple small quantum circuits. We also explore the generalization ability of our circuit decomposition scheme.
+
+The remainder of the paper is structured as follows. Section 2 reviews previous work related to variation quantum algorithms and quantum circuit cutting. Section 3 explains the variational quantum classifier and quantum circuit cutting strategy in detail. Section 4 introduces datasets we use in the project. We present our experimental set-up and results in Section 5. The paper ends with a conclusion section.
+
+\section{Related work}
 % briefly discuss other papers related to this work, or previous work describing other approaches for the same problem. end with a statement on how your paper contributes to these works.
 
+Our project is inspired by the variation quantum algorithms as well as the quantum circuit cutting. We provide an overview on related work in both research directions.
 
+\subsection{Variation Quantum Algorithms}
+The variation quantum algorithm is a class of algorithms that imitates traditional methods used on classical computers. Generally, variation quantum algorithms only require a shallow quantum circuit, which can effectively alleviate the impact of noise on NISQ devices and obtain quantum advantages compared to the classical algorithms \cite{cerezo2021}. The core of variation quantum algorithms is an ansatz with a set of trainable parameters. During the training process, data is transformed and fed into the ansatz. And the cost is calculated based on outputs of the ansatz and real labels. The objective of training is minimize the cost of a pre-defined function.
+
+Variation quantum algorithms have broad application prospects in various fields. In applied mathematics field, Huang et al. \cite{vqa-huang} decompose the transformation matrix into a linear combination of unitaries and optimize the cost function via the variation quantum method. LaRose et al. \cite{vqa-larose} proposed a diagonalization algorithm for principal component analysis, where variation circuit is applied to estimate eigenvalues and eigenvectors. In program compilation field, Khatri et al. \cite{vqa-qc} designed a hybrid algorithm that utilizes the power of both classical and quantum computers to accelerate the compilation of quantum programs. There have also been quantum implementations of machine learning frameworks with variation quantum circuits, such as neural networks for reinforcement learning \cite{vqa-rl}, knowledge graphi \cite{vqa-kg}, etc. In this projetc, we apply the variation quantum circuit as a classifier in supervised learning.
+
+\subsection{Quantum Circuit Cutting}
+To run a large quantum circuit on NISQ devises, we need to partition the large circuit into smaller subcircuits that fit the number of available qubits. Previous studies have investigated several possible schemes of quantum circuit cutting. \cite{bravyi2016} and \cite{tang2021} both consider a hybrid simulation model. Specially, they access a large circuit by combining the power of classical computers and quantum computers. Some classical postprocessing techniques may be required to reconstruct outputs of the larger quantum circuit. The progess in tensor networks also inspire the development of quantum circuit partition. Peng et al. \cite{peng2020} proposed a time-like circuit cutting strategy that converts a wire in the quantum circuit into the measurement of a qubit and the preparation for the input. Mitarai and Fujii \cite{mitarai2021} presented a space-like partition scheme which decomposes nonlocal gates into a sequence of local operations and simulates the original circuit by sampling. It is worth noting that the size of subcircuits can be further reduced in certain scenarios \cite{marshall2022}. We try to simulate the variational quantum classifier with smaller circuits in experiments.
 
 \section{Approach}
 
