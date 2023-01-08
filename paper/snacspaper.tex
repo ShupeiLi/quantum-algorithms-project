@@ -133,7 +133,33 @@ $$p(odd)=p(\ket{01})+p(\ket{10})=b^2+c^2$$
 Remember we have given even parity states value 1 and odd parity states value -1 to make it a classifier, so the expectation value of this probability distribution will be:
 $$E=1*p(even)+(-1)*p(odd)=a^2-b^2-c^2+d^2$$
 
-It's actually the same result compared to $f_{\theta}(x)$. However, in real cases, we couldn't  
+It's actually the same result compared to $f_{\theta}(x)$. However, in real cases, we couldn't calculate the exact expectation while adequate repeatation of running the circuit can give us the precise enough approxiamate result. In other words, when we repeat the circuit for enough times, the obtained result distribution can be considered as the real distribution.
+
+Finally, we turn the function $f_{\theta}(x)$ into a (binary) classifier by considering its sign:
+$$
+h_{\theta}(x)=sign(f_{\theta}(x))=\left\{
+\begin{aligned}
+	1  & \quad if \ f_{\theta}(x)>0 \\
+	-1  & \quad if \ f_{\theta}(x)<0 
+\end{aligned}
+\right.
+$$
+
+Therefore, through adjusting the value of parameter $\theta$ via training process, the input data of different classes will finally have different $h_{\theta}(x)$ function values which makes it an effective classifier.
+
+Finally, our VQC circuit (in 2-qubit case) is shown in Figure \ref{fig:whole}. It combines the  processing steps which have been discussed above. In section 5, we will show and discuss the experimental results of this VQC circuit on different datasets.
+\begin{figure*}[!ht]
+	\centering
+	\includegraphics[width=0.9\textwidth]{whole.png}
+	\caption{VQC quantum circuit: {\small \textnormal{Our final variational quantum classifier circuit in 2-qubit case. Notice that the initial quantum state of each qubit is always $\ket{0}$.}} }
+	\label{fig:whole}
+\end{figure*}
+
+\subsection{Quantum Circuit Partitioning}
+Quantum circuit partitioning is technique to evaluate a large quantum circuit only using smaller quantum computer with fewer quantum qubits \cite{marshall2022high}. Many quantum algorithms require more qubits than nowaday quantum computer can really provide, which is a tremendous limitation for designing quantum algorithm. The quantum circuit partition method provides a practical solution to this problem. It divides a larger quantum circuit into several smaller parts which can be run and evaluate individually. Then these results are combined in a polynomial to replicate the output of the larger machine. Various methods of circuit partitioning have been developed to simulate large quantum circuit with fewer qubits, though these methods require more evaluation running times on these divided smaller circuits. In this paper, we mainly apply two methods which are proposed in paper \cite{marshall2022high} and \cite{mitarai2021constructing}.
+
+\subsubsection{}\hfill\\
+The first method in paper \cite{marshall2022high} divides the larger circuit into smaller blocks, and for each block of partition, a new parameterized unitary is added with different parameters $\xi$.
 
 \section{Data}
 
