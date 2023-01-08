@@ -83,19 +83,19 @@ Variational Quantum Classifier(VQC) is a kind of parameterized quantum circuit u
 \subsubsection{Data Encoding}\hfill\\
 As what we have discussed above, VQC attempts to apply parameterized quantum circuit as its learning model. However, nowadays most of data is stored in classical computers which quantum circuit cannot directly access to. Hence, it's necessary to encode classical data into quantum state that can be preocessed by quantum circuit at first. 
 
-There are many basic methods to achieve this encoding preocess, such as basis encoding, amplitude encoding and angle encoding. Besides, several higher order encoding methods which combines different basic encoding methods are studied as well. In this paper, our proposal data encoding method is xxxx, one of the most popular higher order encoding methods. The specific quantum circuit is shown in Figure \ref{fig:encoding}.
+There are many basic methods to achieve this encoding preocess, such as basis encoding, amplitude encoding and angle encoding. Besides, several higher order encoding methods which combines different basic encoding methods are studied as well. In this paper, our proposal data encoding method is xxxx, one of the most popular higher order encoding methods. The specific quantum circuit $U_{enc}(x)$ is shown in Figure \ref{fig:encoding} (2-qubit case). As we can see, in this 2-qubit example, the encoding circuit is simplely composed of two Hamdamard gates, three phase gates with the components of the input data $x$ as their parameter and two $CNOT$ gates as the entangling gate. Due to difference of the input data components of each class, the states produced by this circuit will be different as well. In addition, because of the use of entangling gate, the $CNOT$, the state on each qubit will have interaction. Besides, the initial quantum state of each qubit is $\ket{0}$ on account of the requirement of real quantum computers.
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=0.48\textwidth]{pre.png}
-	\caption{Data encoding circuit: {\small \textnormal{ Description}} }
+	\includegraphics[width=0.48\textwidth]{encode.png}
+	\caption{Data encoding circuit: {\small \textnormal{Specific quantum circuit of data encoding in 2-qubit case. This circuit is composed of Hamdamard gates, phase gates, and entangling gate($CNOT$).}} }
 	\label{fig:encoding}
 \end{figure}
 \subsubsection{Variational Model}\hfill\\
-Variational model is a quantum circuit with trainalbe parameters. During the training process, these parameters will be updated to improve the model's performance. There are various kinds of variational model can be applied in VQC. In this paper, the circuit of our variational model is shown in Figure \ref{fig:variational}.
+Variational model is a quantum circuit with trainalbe parameters. During the training process, these parameters will be updated to improve the model's performance. There are various kinds of variational model can be applied in VQC. In this paper, the circuit of our variational model $U_{train}(\theta)$is shown in Figure \ref{fig:variational} (2-qubit case). This 2-qubit example is composed by four y-axis rotation gates parameterized by $\theta$ which is the parameter set to be trained, and one controlled Z gate as the entangling gate. After training, these parameterized rotation gates along with entangling gate can have the ability to convert input states of diverse classes to different output states which can be measured to make a final prediction.   
 \begin{figure}[!ht]
 	\centering
-	\includegraphics[width=0.48\textwidth]{pre.png}
-	\caption{Variational model circuit: {\small \textnormal{ Description}} }
+	\includegraphics[width=0.48\textwidth]{vari.png}
+	\caption{Variational model circuit: {\small \textnormal{Specific quantum circuit of variational model in 2-qubit case. This circuit is composed of parameterized y-axis rotation gates and controlled Z gate.}} }
 	\label{fig:variational}
 \end{figure}
 \subsubsection{Measurement}\hfill\\
