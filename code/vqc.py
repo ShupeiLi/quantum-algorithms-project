@@ -133,7 +133,9 @@ class VQC():
         cm = plt.cm.RdBu
 
         # Decision regions
-        xx, yy = np.meshgrid(np.linspace(0, 2, 40), np.linspace(-1, 1, 40))
+#       xx, yy = np.meshgrid(np.linspace(0.4, 1.1, 50), np.linspace(-0.5, 0.5, 50)) # digits
+#       xx, yy = np.meshgrid(np.linspace(-0.6, 1.1, 50), np.linspace(-0.3, 0.5, 50)) # moons
+        xx, yy = np.meshgrid(np.linspace(0, 1.1, 50), np.linspace(-0.2, 0.2, 50)) # breast cancer
         X_grid = [np.array([x, y]) for x, y in zip(xx.flatten(), yy.flatten())]
         predictions_grid = [self.predict(_circuit, f, self.params) for f in X_grid]
         Z = np.reshape(predictions_grid, xx.shape)
@@ -152,7 +154,7 @@ class VQC():
             c='r',
             marker='^',
             edgecolors='k',
-            label=f'class {labels[0]} validation',
+            label=f'class {labels[0]}',
         )
         plt.scatter(
             X_te[:, 0][y_te == labels[1]],
@@ -160,7 +162,7 @@ class VQC():
             c='b',
             marker='^',
             edgecolors='k',
-            label=f'class {labels[1]} validation',
+            label=f'class {labels[1]}',
         )
         plt.legend()
         plt.show()
@@ -186,7 +188,34 @@ class VQC():
             print(f'Test acc: {(predictions == test["y"]).sum() / len(predictions)}')
 
 
+def five_fold_cross_validation(data, n_qubits=2, n_bits=2, visual=True):
+    cv_lst = cross_validation_split(data, n_folds=5)
+    for i in range(len(cv_lst)):
+        model = VQC(cv_lst[i], n_qubits=n_qubits, n_bits=n_bits, epochs=3, n_shots=1000, lr=0.1)
+        model.main()
+        if visual:
+            model.visualization(model.circuit)
+
+
 if __name__ == '__main__':
-    model = VQC(digits(method='svd', n_components=4), n_qubits=4, n_bits=4, epochs=3, n_shots=1000)
-    model.main()
-#   model.visualization(model.circuit)
+    # n_qubits = 2
+#   ## digits
+#   data = digits(method='svd', n_components=2)
+#   five_fold_cross_validation(data)
+
+#   ## make_moons
+#   data = moons()
+#   five_fold_cross_validation(data)
+
+    ## breast_cancer
+#   data = cancer(method='svd', n_components=2)
+#   five_fold_cross_validation(data)
+
+#   # n_qubits = 4
+#   ## digits
+#   data = digits(method='svd', n_components=4)
+#   five_fold_cross_validation(data, n_qubits=4, n_bits=4, visual=False)
+
+    ## breast_cancer
+    data = cancer(method='svd', n_components=4)
+    five_fold_cross_validation(data, n_qubits=4, n_bits=4, visual=False)

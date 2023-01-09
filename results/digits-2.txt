@@ -1,0 +1,38 @@
+digits
+Train: 256
+Test: 64
+lr: 0.1
+epoch: 3
+Accuracy
+CV - 1: 1.0
+CV - 2: 0.953125
+CV - 3: 0.9375
+CV - 4: 0.96875
+CV - 5: 0.921875
+Avg.: 0.95625
+
+make_moons
+Train: 160
+Test: 40
+lr: 0.01
+epoch: 10
+Accuracy
+CV - 1: 0.625
+CV - 2: 0.875
+CV - 3: 0.775
+CV - 4: 0.8
+CV - 5: 0.85
+Avg.: 0.785
+
+breast cancer
+Train: 455
+Test: 114
+lr: 0.1
+epoch: 3
+Accuracy
+CV - 1: 0.6578947368421053
+CV - 2: 0.7543859649122807
+CV - 3: 0.850877192982456
+CV - 4: 0.9298245614035088
+CV - 5: 0.911504424778761
+Avg.: 0.8208973761838225

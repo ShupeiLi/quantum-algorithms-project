@@ -1,65 +1,116 @@
 # -*- coding: utf-8 -*-
 
-import numpy as np
 from data import *
-from vqc import *
-from qiskit import circuit
-from qiskit import QuantumCircuit
-import qiskit.quantum_info as qi
-from qiskit.quantum_info.operators import Operator
-from qiskit.opflow import I, X, Y, Z
+import matplotlib.pyplot as plt
+import pennylane as qml
+from pennylane import numpy as np
+from pennylane.optimize import NesterovMomentumOptimizer
+
+dev = qml.device('default.qubit', wires=4)
+is_cut = True
+
+def statepreparation(x):
+    qml.Hadamard(wires=0)
+    qml.PauliRot(2 * x[0], 'Z',  wires=0)
+    qml.Hadamard(wires=1)
+    qml.PauliRot(2 * x[1], 'Z',  wires=1)
+    qml.Hadamard(wires=2)
+    qml.PauliRot(2 * x[2], 'Z',  wires=2)
+    qml.Hadamard(wires=3)
+    qml.PauliRot(2 * x[3], 'Z',  wires=3)
+
+    qml.CNOT(wires=[0, 1])
+    qml.PauliRot(2 * (np.pi - x[0]) * (np.pi - x[1]), 'Z',  wires=1)
+    qml.CNOT(wires=[0, 1])
+
+    if not is_cut:
+        qml.CNOT(wires=[0, 2])
+        qml.PauliRot(2 * (np.pi - x[0]) * (np.pi - x[2]), 'Z',  wires=2)
+        qml.CNOT(wires=[0, 2])
+
+    qml.CNOT(wires=[2, 3])
+    qml.PauliRot(2 * (np.pi - x[2]) * (np.pi - x[3]), 'Z',  wires=3)
+    qml.CNOT(wires=[2, 3])
+
+    qml.CNOT(wires=[1, 2])
+    qml.PauliRot(2 * (np.pi - x[1]) * (np.pi - x[2]), 'Z',  wires=2)
+    qml.CNOT(wires=[1, 2])
+    
+    qml.CNOT(wires=[0, 3])
+    qml.PauliRot(2 * (np.pi - x[0]) * (np.pi - x[3]), 'Z',  wires=3)
+    qml.CNOT(wires=[0, 3])
+
+    qml.CNOT(wires=[1, 3])
+    qml.PauliRot(2 * (np.pi - x[1]) * (np.pi - x[3]), 'Z',  wires=3)
+    qml.CNOT(wires=[1, 3])
+        
+
+@qml.qnode(dev)
+def large_circuit(theta, x):
+    statepreparation(x)
+    qml.RZ(theta[0], wires=0)
+    qml.RZ(theta[1], wires=1)
+    qml.RZ(theta[2], wires=2)
+    qml.RZ(theta[3], wires=3)
+
+    qml.RY(theta[4], wires=0)
+    qml.RY(theta[5], wires=1)
+    qml.RY(theta[6], wires=2)
+    qml.RY(theta[7], wires=3)
+
+    qml.CZ(wires=[0, 3])
+    qml.CZ(wires=[0, 1])
+    qml.CZ(wires=[1, 2])
+    qml.CZ(wires=[2, 3])
+
+    qml.RZ(theta[8], wires=0)
+    qml.RZ(theta[9], wires=1)
+    qml.RZ(theta[10], wires=2)
+    qml.RZ(theta[11], wires=3)
+
+    qml.RY(theta[12], wires=0)
+    qml.RY(theta[13], wires=1)
+    qml.RY(theta[14], wires=2)
+    qml.RY(theta[15], wires=3)
+    return qml.expval(qml.PauliZ(0))
 
 
-class Partition2(VQC):
-    """Implement circuit partition strategy in paper: Constructing a Virtual Two-qubit Gate by Sampling Single-qubit Operations."""
-    def __init__(self, data, n_qubits=2, n_bits=2, feature_reps=1, paulis=['Z', 'ZZ'], ansatz_reps=1, n_shots=100, lr=0.1, epochs=3):
-        super().__init__(data, n_qubits, n_bits, feature_reps, paulis, ansatz_reps, n_shots, lr, epochs)
+@qml.cut_circuit()
+@qml.qnode(dev)
+def small_circuit(theta, x):
+    statepreparation(x)
+    qml.RZ(theta[0], wires=0)
+    qml.RZ(theta[1], wires=1)
+    qml.RZ(theta[2], wires=2)
+    qml.RZ(theta[3], wires=3)
 
-    def initialization(self):
-        """Initialize the quantum circuit."""
-        # Initialize the quantum circuit
-        self.pauli_feature_map = self.set_feature_map()
-#       self.ansatz = self.set_ansatz()
-#       small_circuit1 = self.construct_circuit(plot=True)
-#       small_circuit2 = self.construct_circuit(plot=True)
-#       self.circuit = [small_circuit1, small_circuit2]
+    qml.RY(theta[4], wires=0)
+    qml.RY(theta[5], wires=1)
+    qml.RY(theta[6], wires=2)
+    qml.RY(theta[7], wires=3)
 
-#       # Initialize parameters
-#       params1 = np.random.random((self.L, self.ansatz.num_parameters))
-#       params2 = np.random.random((self.L, self.ansatz.num_parameters))
-#       weights = np.random.random(2 * self.L)
-#       self.params = [params1, params2, weights]
+    qml.CZ(wires=[0, 3])
+    qml.CZ(wires=[0, 1])
+    qml.WireCut(wires=1)
+    qml.WireCut(wires=2)
+    qml.WireCut(wires=3)
+    qml.CZ(wires=[1, 2])
+    qml.CZ(wires=[2, 3])
 
-    def set_ansatz(self, switch=False, plot=False):
-        """Ansatz circuit."""
-        ansatz = QuantumCircuit(2)
-        ansatz.rz(circuit.Parameter('theta0'), 0)
-        ansatz.rz(circuit.Parameter('theta1'), 1)
-        ansatz.ry(circuit.Parameter('theta2'), 0)
-        ansatz.ry(circuit.Parameter('theta3'), 1)
-        ansatz.cz(0, 1)
-        ansatz.z(0)
-        ansatz.z(1)
+    qml.RZ(theta[8], wires=0)
+    qml.RZ(theta[9], wires=1)
+    qml.RZ(theta[10], wires=2)
+    qml.RZ(theta[11], wires=3)
 
-        space = [-1, 1]
-        alpha1 = np.random.choice(space, 1)
-        alpha2 = np.random.choice(space, 1)
-        project = Operator((I + alpha2 * Z) / 2)
-        if switch:
-            ansatz.append(project, 0)
-            ansatz.append(project, 1)
-            ansatz.rz(alph1 * np.pi / 2, 0)
-            ansatz.rz(alph1 * np.pi / 2, 1)
-        else:
-            ansatz.rz(alph1 * np.pi / 2, 0)
-            ansatz.rz(alph1 * np.pi / 2, 1)
-            ansatz.append(project, 0)
-            ansatz.append(project, 1)
-        if plot:
-            ansatz.draw(output="mpl")
-            plt.show()
-        return ansatz
+    qml.RY(theta[12], wires=0)
+    qml.RY(theta[13], wires=1)
+    qml.RY(theta[14], wires=2)
+    qml.RY(theta[15], wires=3)
+    return qml.expval(qml.PauliZ(0))
 
+data = digits(method='svd', n_components=4)
+cv_lst = cross_validation_split(data, n_folds=5)
+test = cv_lst[0]
+weights = np.array(np.random.random(16), requires_grad=True)
+print(small_circuit(weights, test['train']['X'][0, :]))
 
-model = Partition2(digits(method='svd', n_components=4), n_qubits=2, n_bits=2)
-model.set_ansatz(plot=True)
