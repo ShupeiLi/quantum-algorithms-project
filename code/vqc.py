@@ -44,7 +44,7 @@ class VQC():
         # Initialize the quantum circuit
         self.pauli_feature_map = self.set_feature_map()
         self.ansatz = self.set_ansatz()
-        self.circuit = self.construct_circuit(plot=True)
+        self.circuit = self.construct_circuit()
 
         # Initialize parameters in the ansatz
         self.params = np.random.random(self.ansatz.num_parameters)
@@ -206,31 +206,31 @@ class VQC():
 def five_fold_cross_validation(data, n_qubits=2, n_bits=2, visual=True):
     cv_lst = cross_validation_split(data, n_folds=5)
     for i in range(len(cv_lst)):
-        model = VQC(cv_lst[i], n_qubits=n_qubits, n_bits=n_bits, epochs=3, n_shots=1000, lr=0.1)
+        model = VQC(cv_lst[i], n_qubits=n_qubits, n_bits=n_bits, epochs=3, n_shots=1000, lr=0.01)
         model.main()
         if visual:
             model.visualization(model.circuit)
 
 
 if __name__ == '__main__':
-#   # n_qubits = 2
-#   ## digits
-#   data = digits(method='svd', n_components=2)
-#   five_fold_cross_validation(data)
+    # n_qubits = 2
+    ## digits
+    data = digits(method='svd', n_components=2)
+    five_fold_cross_validation(data)
 
-#   ## make_moons
-#   data = moons()
-#   five_fold_cross_validation(data)
+    ## make_moons
+    data = moons()
+    five_fold_cross_validation(data)
 
-#   ## breast_cancer
-#   data = cancer(method='svd', n_components=2)
-#   five_fold_cross_validation(data)
+    ## breast_cancer
+    data = cancer(method='svd', n_components=2)
+    five_fold_cross_validation(data)
 
     # n_qubits = 4
     ## digits
     data = digits(method='svd', n_components=4)
     five_fold_cross_validation(data, n_qubits=4, n_bits=4, visual=False)
 
-#   ## breast_cancer
-#   data = cancer(method='svd', n_components=4)
-#   five_fold_cross_validation(data, n_qubits=4, n_bits=4, visual=False)
+    ## breast_cancer
+    data = cancer(method='svd', n_components=4)
+    five_fold_cross_validation(data, n_qubits=4, n_bits=4, visual=False)
