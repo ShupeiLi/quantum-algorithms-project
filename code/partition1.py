@@ -17,8 +17,8 @@ class Partition1(VQC):
         # Initialize the quantum circuit
         self.pauli_feature_map = self.set_feature_map()
         self.ansatz = self.set_ansatz()
-        small_circuit1 = self.construct_circuit(plot=True)
-        small_circuit2 = self.construct_circuit(plot=True)
+        small_circuit1 = self.construct_circuit(plot=False)
+        small_circuit2 = self.construct_circuit(plot=False)
         self.circuit = [small_circuit1, small_circuit2]
 
         # Initialize parameters
@@ -94,6 +94,18 @@ class Partition1(VQC):
         return params
 
 
+def five_fold_cross_validation(data, n_qubits=2, n_bits=2):
+    cv_lst = cross_validation_split(data, n_folds=5)
+    for i in range(len(cv_lst)):
+        model = Partition1(cv_lst[i], n_qubits=n_qubits, n_bits=n_bits, epochs=3, lr=0.1, L=2, n_shots=1000)
+        model.main()
+
+
 if __name__ == '__main__':
-    model = Partition1(digits(method='svd', n_components=4), n_qubits=2, n_bits=2, epochs=10, L=2, n_shots=1000)
-    model.main()
+    # digits
+    data = digits(method='svd', n_components=4)
+    five_fold_cross_validation(data)
+
+    # breast_cancer
+    data = cancer(method='svd', n_components=4)
+    five_fold_cross_validation(data)

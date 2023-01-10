@@ -199,22 +199,22 @@ def five_fold_cross_validation(data, n_qubits=2, n_bits=2, visual=True):
 
 if __name__ == '__main__':
     # n_qubits = 2
-#   ## digits
-#   data = digits(method='svd', n_components=2)
-#   five_fold_cross_validation(data)
+    ## digits
+    data = digits(method='svd', n_components=2)
+    five_fold_cross_validation(data)
 
-#   ## make_moons
-#   data = moons()
-#   five_fold_cross_validation(data)
+    ## make_moons
+    data = moons()
+    five_fold_cross_validation(data)
 
     ## breast_cancer
-#   data = cancer(method='svd', n_components=2)
-#   five_fold_cross_validation(data)
+    data = cancer(method='svd', n_components=2)
+    five_fold_cross_validation(data)
 
-#   # n_qubits = 4
-#   ## digits
-#   data = digits(method='svd', n_components=4)
-#   five_fold_cross_validation(data, n_qubits=4, n_bits=4, visual=False)
+    # n_qubits = 4
+    ## digits
+    data = digits(method='svd', n_components=4)
+    five_fold_cross_validation(data, n_qubits=4, n_bits=4, visual=False)
 
     ## breast_cancer
     data = cancer(method='svd', n_components=4)
