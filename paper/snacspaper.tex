@@ -191,26 +191,26 @@ $$f_(x)=\sum \lambda_i g_{\theta i, \xi i}(x)$$.
 
 where $g(\cdot)$ represents the multiplication result of each block. Notice that if all parameters are initialized as a same value, the weighted sum becomes meaningless because all $g_{\theta i, \xi i}(x)$ will have same results as well. Besides, the gradients will also be the same, which means this weighted sum actually is equivalent to a single $g(x)$. And it's obviously not the expected result so we are supposed to initialize the circuits with different parameters and weights.
 
-Finally, our circuit used in experiments are shown in Figure \ref{fig:cutting}, which is an example of cutting 4-qubit circuit into 2-qubit one. The experimental results will be show and discussed in section 5.
-\begin{figure}[!ht]
-	\begin{minipage}[t]{0.5\textwidth}%并排放两张图片，每张占页面的0.5，下同。
+Finally, our circuit used in experiments are shown in Figure \ref{fig:cutting}, which is an example of cutting 4-qubit circuit into 2-qubit. The experimental results will be show and discussed in section 5.
+\begin{figure*}[!ht]
+	\begin{minipage}[t]{0.9\textwidth}%并排放两张图片，每张占页面的0.5，下同。
 		\centering
-		\includegraphics[width=\textwidth]{pre.png}
+		\includegraphics[width=\textwidth]{lar.png}
 		\subcaption{Original large circuit} 
 	\end{minipage}
-	\begin{minipage}[t]{0.5\textwidth}%并排放两张图片，每张占页面的0.5，下同。
+	\begin{minipage}[t]{0.9\textwidth}%并排放两张图片，每张占页面的0.5，下同。
 		\centering
 		\includegraphics[width=\textwidth]{par1.png}
 		\subcaption{Smaller block part 1} 
 	\end{minipage}
-	\begin{minipage}[t]{0.5\textwidth}%并排放两张图片，每张占页面的0.5，下同。
+	\begin{minipage}[t]{0.9\textwidth}%并排放两张图片，每张占页面的0.5，下同。
 	    \centering
 		\includegraphics[width=\textwidth]{par2.png}
 		\subcaption{Smaller block part 2} 
 	\end{minipage}
-	\caption{4-qubit to 2-qubit: {\small \textnormal{A partitioning method to simulate large quamtum circuit. Notice that new learnable parameters $\lambda$ and $\xi$ are introduced into the smaller circuit block.}} }
+	\caption{4-qubit to 2-qubit: {\small \textnormal{A partitioning method to simulate large quamtum circuit. Notice that new learnable parameters $\lambda$ and $\xi$ are introduced into the smaller circuit block. To simulate large circuits with smaller one, more running times to evaluate the circuits are required.}} }
 	\label{fig:cutting}
-\end{figure}
+\end{figure*}
 
 \section{Data}
 
