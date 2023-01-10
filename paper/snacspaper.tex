@@ -9,6 +9,7 @@
 \acmISBN{}
 \acmDOI{}
 \usepackage[braket, qm]{qcircuit}
+\usepackage{subcaption}
 %%%% Do not modify lines 1-11
 
 \begin{document}
@@ -171,10 +172,45 @@ Finally, our VQC circuit (in 2-qubit case) is shown in Figure \ref{fig:whole}. I
 \end{figure*}
 
 \subsection{Quantum Circuit Partitioning}
-Quantum circuit partitioning is technique to evaluate a large quantum circuit only using smaller quantum computer with fewer quantum qubits \cite{marshall2022high}. Many quantum algorithms require more qubits than nowaday quantum computer can really provide, which is a tremendous limitation for designing quantum algorithm. The quantum circuit partition method provides a practical solution to this problem. It divides a larger quantum circuit into several smaller parts which can be run and evaluate individually. Then these results are combined in a polynomial to replicate the output of the larger machine. Various methods of circuit partitioning have been developed to simulate large quantum circuit with fewer qubits, though these methods require more evaluation running times on these divided smaller circuits. In this paper, we mainly apply two methods which are proposed in paper \cite{marshall2022high} and \cite{mitarai2021constructing}.
+Quantum circuit partitioning is technique to evaluate a large quantum circuit only using smaller quantum computer with fewer quantum qubits \cite{marshall2022high}. Many quantum algorithms require more qubits than nowaday quantum computer can really provide, which is a tremendous limitation for designing quantum algorithm. The quantum circuit partition method provides a practical solution to this problem. It divides a larger quantum circuit into several smaller parts which can be run and evaluate individually. Then these results are combined in a polynomial to replicate the output of the larger machine. Various methods of circuit partitioning have been developed to simulate large quantum circuit with fewer qubits, though these methods require more evaluation running times on these divided smaller circuits. In this paper, we mainly apply a method which is proposed in paper \cite{marshall2022high}.
 
-\subsubsection{}\hfill\\
-The first method in paper \cite{marshall2022high} divides the larger circuit into smaller blocks, and for each block of partition, a new parameterized unitary is added with different parameters $\xi$.
+The method in paper \cite{marshall2022high} divides the larger circuit into smaller blocks, and for each block of partition, a new parameterized unitary is added with different parameters $\xi$. Besides, new parameters $\lambda$ are used to combine the observation results of several running of the circuit. In mathematic form of this process can be formulated as:
+$$f_{\theta,\xi,\lambda}(x)=\sum_{i\in [L]}\lambda_i\prod_{k\in [K]}\bra{0}U^{k\dagger}(\theta,x,\xi_{i,k})M_kU^k(\theta,x,\xi_{i,k+K})\ket{0}$$
+
+This formula looks rather complicated, but the key point of it can be viewed in Figure \ref{fig:part}. We partition the quantum circuit into two blocks. As we can see, the internal part of each block, $A_{\theta}$ and $B_{\theta}$ remains the same after partitioning. And the operator $G$ which joined two blocks is cut to two parameterized unitary $G_{\xi 1}$ and $G_{\xi 2}$. When simulating the larger circuit, we firstly run each small block individually, and then combine the results by multiplication. Then, each samll block will be operated several times with different initialized learnable parameters $\theta$ and $\xi$ and combine the final results using a weighted sum, where the weights $\lambda$ are also learnable parameters. After training process, the parameters $\lambda$, $\xi$ and $\theta$ can all be updated to simulate the larger circuit and obtain promising results. This method requires running the smaller blocks several more times, which is actually to save space (number of qubits) with time (times of running circuit).
+
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=0.45\textwidth]{part.png}
+	\caption{Partitioning large circuit: {\small \textnormal{A partitioning method to simulate large quamtum circuit. Notice that new learnable parameters $\lambda$ and $\xi$ are introduced into the smaller circuit block.}} }
+	\label{fig:part}
+\end{figure}
+
+And one remarkable thing is that we shouldn't initialize the parameters with the same values. Our final result is a weighted sum. For notation simplicity, we write the above formula in this form:
+$$f_(x)=\sum \lambda_i g_{\theta i, \xi i}(x)$$.
+
+where $g(\cdot)$ represents the multiplication result of each block. Notice that if all parameters are initialized as a same value, the weighted sum becomes meaningless because all $g_{\theta i, \xi i}(x)$ will have same results as well. Besides, the gradients will also be the same, which means this weighted sum actually is equivalent to a single $g(x)$. And it's obviously not the expected result so we are supposed to initialize the circuits with different parameters and weights.
+
+Finally, our circuit used in experiments are shown in Figure \ref{fig:cutting}, which is an example of cutting 4-qubit circuit into 2-qubit one. The experimental results will be show and discussed in section 5.
+\begin{figure}[!ht]
+	\begin{minipage}[t]{0.5\textwidth}%并排放两张图片，每张占页面的0.5，下同。
+		\centering
+		\includegraphics[width=\textwidth]{pre.png}
+		\subcaption{Original large circuit} 
+	\end{minipage}
+	\begin{minipage}[t]{0.5\textwidth}%并排放两张图片，每张占页面的0.5，下同。
+		\centering
+		\includegraphics[width=\textwidth]{par1.png}
+		\subcaption{Smaller block part 1} 
+	\end{minipage}
+	\begin{minipage}[t]{0.5\textwidth}%并排放两张图片，每张占页面的0.5，下同。
+	    \centering
+		\includegraphics[width=\textwidth]{par2.png}
+		\subcaption{Smaller block part 2} 
+	\end{minipage}
+	\caption{4-qubit to 2-qubit: {\small \textnormal{A partitioning method to simulate large quamtum circuit. Notice that new learnable parameters $\lambda$ and $\xi$ are introduced into the smaller circuit block.}} }
+	\label{fig:cutting}
+\end{figure}
 
 \section{Data}
 
