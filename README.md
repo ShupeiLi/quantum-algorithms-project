@@ -1,6 +1,4 @@
-# quantum-algorithms-project
-Quantun Algorithms: Final Project
-
-https://quantumcomputing.stackexchange.com/questions/28285/quasiprobability-decomposition-of-the-cz-gate?rq=1
-
-https://quantumcomputing.stackexchange.com/questions/28607/cnot-quasiprobability-decomposition-with-gamma-3
+# Quantun Algorithms: Final Project
+Topic: Big Quantum Circuits on Small Quantum Computers\
+Chenyu Shi and Shupei Li\
+Quantum Algorithms, 2022 Fall, Leiden University
