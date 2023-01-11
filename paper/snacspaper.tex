@@ -35,10 +35,10 @@
 
 \renewcommand{\shortauthors}{Shi and Li}
 
-\keywords{keyword1, keyword2, keyword3, social network analysis, network science}
+\keywords{variational quantum classifier, quantum circuit partitioning, quantum algorithms}
 
 \begin{abstract}
-
+We implement the variational quantum classifier and simulate the large variational quantum circuit with a set of small subcircuits in our project. We evaluate the performance of variational circuits on three open source datasets by performing the five-fold cross validation. Experimental results support the effectiveness of the variational quantum classifier and the validity of the quantum circuit partitioning strategy.
 % the abstract summarizes the entire paper: context, problem, solution, approach, data, experimental results, conclusion and real-world implications. but, shortly, so in half a column or so.
 
 \end{abstract}
@@ -63,7 +63,7 @@ The remainder of the paper is structured as follows. Section 2 reviews previous 
 Our project is inspired by the variation quantum algorithms as well as the quantum circuit cutting. We provide an overview on related work in both research directions.
 
 \subsection{Variation Quantum Algorithms}
-The variation quantum algorithm is a class of algorithms that imitates traditional methods used on classical computers. Generally, variation quantum algorithms only require a shallow quantum circuit, which can effectively alleviate the impact of noise on NISQ devices and obtain quantum advantages compared to the classical algorithms \cite{cerezo2021}. The core of variation quantum algorithms is an ansatz with a set of trainable parameters. During the training process, data is transformed and fed into the ansatz. And the cost is calculated based on outputs of the ansatz and real labels. The objective of training is minimize the cost of a pre-defined function.
+The variation quantum algorithm is a class of algorithms that imitates traditional methods used on classical computers. Generally, variation quantum algorithms only require a shallow quantum circuit, which can effectively alleviate the impact of noise on NISQ devices and obtain quantum advantages compared to the classical algorithms \cite{cerezo2021}. The core of variation quantum algorithms is an ansatz with a set of trainable parameters. During the training process, data is transformed and fed into the ansatz. And the cost is calculated according to outputs of the ansatz and real labels. The objective of training is minimizing the cost of a pre-defined function.
 
 Variation quantum algorithms have broad application prospects in various fields. In applied mathematics field, Huang et al. \cite{vqa-huang} decompose the transformation matrix into a linear combination of unitaries and optimize the cost function via the variation quantum method. LaRose et al. \cite{vqa-larose} proposed a diagonalization algorithm for principal component analysis, where variation circuit is applied to estimate eigenvalues and eigenvectors. In program compilation field, Khatri et al. \cite{vqa-qc} designed a hybrid algorithm that utilizes the power of both classical and quantum computers to accelerate the compilation of quantum programs. There have also been quantum implementations of machine learning frameworks with variation quantum circuits, such as neural networks for reinforcement learning \cite{vqa-rl}, knowledge graphi \cite{vqa-kg}, etc. In this projetc, we apply the variation quantum circuit as a classifier in supervised learning.
 
@@ -111,7 +111,7 @@ $$gradient(\theta)=\frac{L(\theta+s)-L(\theta-s)}{2s}$$
 where $s$ is usually chosen as a small real positive number. Then this proximate gradient is used to update model's parameters just as the same way in the conventional machine learning.
 
 \subsubsection{Overall Analysis}\hfill\\
-In this subsection, we make a overal analysis on our VQC and the circuit theoretically to illustrate why this process makes a good classifier.
+In this subsection, we make an overal analysis on our VQC and the circuit theoretically to illustrate why this process makes a good classifier.
 
 According to the analysis in the previous subsections, our  ansatz can be written in the mathematical form:
 $$U(x,\theta)=U_{train}(\theta)U_{enc}(x)$$
@@ -174,7 +174,7 @@ Finally, our VQC circuit (in 2-qubit case) is shown in Figure \ref{fig:whole}. I
 \subsection{Quantum Circuit Partitioning}
 Quantum circuit partitioning is technique to evaluate a large quantum circuit only using smaller quantum computer with fewer quantum qubits \cite{marshall2022high}. Many quantum algorithms require more qubits than nowaday quantum computer can really provide, which is a tremendous limitation for designing quantum algorithm. The quantum circuit partition method provides a practical solution to this problem. It divides a larger quantum circuit into several smaller parts which can be run and evaluate individually. Then these results are combined in a polynomial to replicate the output of the larger machine. Various methods of circuit partitioning have been developed to simulate large quantum circuit with fewer qubits, though these methods require more evaluation running times on these divided smaller circuits. In this paper, we mainly apply a method which is proposed in paper \cite{marshall2022high}.
 
-The method in paper \cite{marshall2022high} divides the larger circuit into smaller blocks, and for each block of partition, a new parameterized unitary is added with different parameters $\xi$. Besides, new parameters $\lambda$ are used to combine the observation results of several running of the circuit. In mathematic form of this process can be formulated as:
+The method in paper \cite{marshall2022high} divides the larger circuit into smaller blocks, and for each block of partition, a new parameterized unitary is added with different parameters $\xi$. Besides, new parameters $\lambda$ are used to combine the observation results of some running of the circuit. In mathematic form of this process can be formulated as:
 $$f_{\theta,\xi,\lambda}(x)=\sum_{i\in [L]}\lambda_i\prod_{k\in [K]}\bra{0}U^{k\dagger}(\theta,x,\xi_{i,k})M_kU^k(\theta,x,\xi_{i,k+K})\ket{0}$$
 
 This formula looks rather complicated, but the key point of it can be viewed in Figure \ref{fig:part}. We partition the quantum circuit into two blocks. As we can see, the internal part of each block, $A_{\theta}$ and $B_{\theta}$ remains the same after partitioning. And the operator $G$ which joined two blocks is cut to two parameterized unitary $G_{\xi 1}$ and $G_{\xi 2}$. When simulating the larger circuit, we firstly run each small block individually, and then combine the results by multiplication. Then, each samll block will be operated several times with different initialized learnable parameters $\theta$ and $\xi$ and combine the final results using a weighted sum, where the weights $\lambda$ are also learnable parameters. After training process, the parameters $\lambda$, $\xi$ and $\theta$ can all be updated to simulate the larger circuit and obtain promising results. This method requires running the smaller blocks several more times, which is actually to save space (number of qubits) with time (times of running circuit).
@@ -189,7 +189,7 @@ This formula looks rather complicated, but the key point of it can be viewed in 
 And one remarkable thing is that we shouldn't initialize the parameters with the same values. Our final result is a weighted sum. For notation simplicity, we write the above formula in this form:
 $$f_(x)=\sum \lambda_i g_{\theta i, \xi i}(x)$$.
 
-where $g(\cdot)$ represents the multiplication result of each block. Notice that if all parameters are initialized as a same value, the weighted sum becomes meaningless because all $g_{\theta i, \xi i}(x)$ will have same results as well. Besides, the gradients will also be the same, which means this weighted sum actually is equivalent to a single $g(x)$. And it's obviously not the expected result so we are supposed to initialize the circuits with different parameters and weights.
+where $g(\cdot)$ represents the multiplication result of each block. Notice that if all parameters are initialized as a same value, the weighted sum becomes meaningless because all $g_{\theta i, \xi i}(x)$ will have same results as well. Besides, the gradients will also be the same, which means this weighted sum actually is equivalent to a single $g(x)$. And it's obviously not the expected result, so we are supposed to initialize the circuits with different parameters and weights.
 
 Finally, our circuit used in experiments are shown in Figure \ref{fig:cutting}, which is an example of cutting 4-qubit circuit into 2-qubit. The experimental results will be show and discussed in section 5.
 \begin{figure*}[!ht]
@@ -216,10 +216,10 @@ Finally, our circuit used in experiments are shown in Figure \ref{fig:cutting}, 
 We evaluate the variational quantum classifier and the quantum circuit partitioning strategy on three open source datasets: Digits, Moons, and Breast Cancer. We directly use the scikit-learn's built-in version of datasets. The following is a brief overview of data.
 
 \vspace{0.2cm}
-\noindent\textbf{Digits}. Digits dataset is a copy of the famous benchmark MNIST in machine learning field. It is composed of hand-written numbers from zero to nine. The original dataset includes 1,797 samples and all ten classes. However, we select a subset of data, whose label is either zero or one, to convert a multi-class classification problem into a binary-class classification problem that fits our quantum circuits. The subset has 320 samples with 64 available features, where the ratio of number zero to number one is 1:1.
+\noindent\textbf{Digits}. Digits dataset is a copy of the famous benchmark MNIST in machine learning field. It is composed of handwritten numbers from zero to nine. The original dataset includes 1,797 samples and all ten classes. However, we select a subset of data, whose label is either zero or one, to convert a multi-class classification problem into a binary-class classification problem that fits our quantum circuits. The subset has 320 samples with 64 available features, where the ratio of number zero to number one is 1:1.
 
 \vspace{0.2cm}
-\noindent\textbf{Moons}. Moons is a generated dataset in scikit-learn with two features. Its visualization result is two interleaving half circles. The integer label, zero or one, indicates the class membership of each record. We generate 200 samples in experiments.
+\noindent\textbf{Moons}. Moons is a generated dataset in scikit-learn with two features. Its visualization result is two interleaving half circles. The integer label, zero or one, indicates the class membership of each record. We generate 200 samples in experiments. The random state is set to 42 to ensure the reproducibility.
 
 \vspace{0.2cm}
 \noindent\textbf{Breast Cancer}. Breast Cancer dataset is a copy of Diagnostic Wisconsin Breast Cancer Data, which is a widely used binary classification dataset. The original data is a set of digitized images that shows a fine needle aspirate of a breast mass. Scikit-learn's version provides the structured data with 30 numeric features calculated from images. These features describe characteristics of cell nuclei, such as radius, symmetry, etc. The number of samples is 569. A malignant tumor belongs to class 0, while a benign one belongs to class 1.
@@ -300,11 +300,11 @@ Figure \ref{fig:contour} shows the visualization of test set in the fourth fold 
         \includegraphics[width=\textwidth]{./cancer-cv4.png}
         \caption{Contour Plot: Breast Cancer}
     \end{subfigure}
-    \caption{Visualization of Test Set in the 4th Fold}
+    \caption{Visualization of Test Set in the 4th Fold: \textnormal{Draw samples of the test set in contour plots. Red triangles and blue triangles are class 0 and class 1 respectively.}}
     \label{fig:contour}
 \end{figure}
 
-According to Figure \ref{fig:contour}, the variational quantum classifier constructs relatively optimal decision boundaries on Digits dataset, with one misclassified class 0 sample and one misclassified class 1 sample in the fourth fold. However, the variational quantum classifier prefer the false negative error on Moons dataset, while has a bias towards the false positive error on Breast Cancer dataset. The intrinsic bias of classifier may be the cause of the relatively low average accuracy on Moons and Breast Cancer data.
+According to Figure \ref{fig:contour}, the variational quantum classifier constructs relatively optimal decision boundaries on Digits dataset, with one misclassified class 0 sample and one misclassified class 1 sample in the fourth fold. However, the variational quantum classifier prefers the false negative error on Moons dataset, while has a bias towards the false positive error on Breast Cancer dataset. The intrinsic bias of classifier may be the cause of the relatively low average accuracy on Moons and Breast Cancer data.
 
 \subsection{Results: Quantum Circuit Partitioning}
 In quantum circuit partitioning experiment, we simulate a 4-qubit VQC with only 2-qubit smaller circuits. Table \ref{tab:qcp-results} summarizes the results of quantum circuit partitioning.
@@ -319,13 +319,13 @@ In quantum circuit partitioning experiment, we simulate a 4-qubit VQC with only 
        \midrule
        Digits & Large circuit & \textbf{0.9688} & 0.1\\
               & Small circuits &  0.9656 & 0.01\\
-       Breast Cancer & Large circuit & \textbf{0.7612} & 0.01\\
-                     & Small circuits & 0.7314 & 0.1\\
+       Breast & Large circuit & \textbf{0.7612} & 0.01\\
+       Cancer & Small circuits & 0.7314 & 0.1\\
        \bottomrule
     \end{tabular}
 \end{table}
 
-According to Table \ref{tab:qcp-results}, the large circuit with four qubits performs slghtly better than small subcircuits with two qubits on both datasets. It is consistent with the theory that the set of small subcircuits is an approximation of the original large circuit and is able to achieve the comparable performance. Experimental results support the validity of our quantum circuit partitioning strategy.
+According to Table \ref{tab:qcp-results}, the large circuit with four qubits performs slghtly better than small subcircuits with two qubits on both datasets. It is consistent with the theory that the set of small subcircuits is an approximation of the original large circuit and is able to achieve the comparable performance. However, the runtime of small circuits is longer than that of the large circuit during the experiment. The reason is that we need to run small circuits with different initialization settings several times to simulate the effect of the large circuit. In our experiment, we call eight small subcircuits to replicate the large circuit. The increase in time complexity is one disadvantage of reducing available qubits. Experimental results support the validity of our quantum circuit partitioning strategy.
 
 % subsections on for example the experimental setup (which software, hardware and parameters did you choose), as well as the results of applying your approach to the data you described in preceding sections, leading to results that answer your research questions. you likely present some tables and figures
 
