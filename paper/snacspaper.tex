@@ -307,7 +307,7 @@ Figure \ref{fig:contour} shows the visualization of test set in the fourth fold 
 According to Figure \ref{fig:contour}, the variational quantum classifier constructs relatively optimal decision boundaries on Digits dataset, with one misclassified class 0 sample and one misclassified class 1 sample in the fourth fold. However, the variational quantum classifier prefer the false negative error on Moons dataset, while has a bias towards the false positive error on Breast Cancer dataset. The intrinsic bias of classifier may be the cause of the relatively low average accuracy on Moons and Breast Cancer data.
 
 \subsection{Results: Quantum Circuit Partitioning}
-Table \ref{tab:qcp-results} summarizes the results of quantum circuit partitioning.
+In quantum circuit partitioning experiment, we simulate a 4-qubit VQC with only 2-qubit smaller circuits. Table \ref{tab:qcp-results} summarizes the results of quantum circuit partitioning.
 
 \begin{table}[!ht]
     \centering
@@ -329,8 +329,12 @@ According to Table \ref{tab:qcp-results}, the large circuit with four qubits per
 
 % subsections on for example the experimental setup (which software, hardware and parameters did you choose), as well as the results of applying your approach to the data you described in preceding sections, leading to results that answer your research questions. you likely present some tables and figures
 
-\section{Conclusion}
+\section{Discussion}
+In this section, we make a discussion and conclusion of the theoretical analysis and experimental results.
 
+For variational quantum classifier, we could see it works well on most datasets, which means VQC is actually a valid classifer can be applied to various classification tasks. However, on dataset such as Moons, VQC only has a not bad performance compared to other datasets in the experiment so the performance of VQC can be influenced by the datasets as well. Besides, directly input original data often requires large number of qubits in VQC, which is a great limitation to today's quantum computer. Therefore, we have to use external dimensionality reduction or quantum circuit partitioning that has been discussed in the other parts of our experiments.
+
+Quantum circuit partitioning works well in our experiments as well. Smaller circuits with fewer qubits can indeed simulate a large circuit such as VQC well. Additionally, the smaller circuits have a relatively good performance on test sets compared to training sets, which means this partitioning method actually has a generalisation ability. Nevertheless, simulating a large circuit with smaller circuits requires more running budget to repeat and evaluate smaller circuits for more times, which is great limitation of quantum circuit partitioning. 
 % summarize in at most one column the main results of the paper, stating how you addressed the problem statement and how the experiments help understand whether  the approach works (or not). end with one or two short suggestions for future work. 
 
 \begin{acks}
