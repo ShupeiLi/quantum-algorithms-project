@@ -213,11 +213,119 @@ Finally, our circuit used in experiments are shown in Figure \ref{fig:cutting}, 
 \end{figure*}
 
 \section{Data}
-We evaluate the variational quantum classifier and the quantum circuit division strategy on three open source datasets: Digits, Moons, and Breast Cancer. 
+We evaluate the variational quantum classifier and the quantum circuit partitioning strategy on three open source datasets: Digits, Moons, and Breast Cancer. We directly use the scikit-learn's built-in version of datasets. The following is a brief overview of data.
+
+\vspace{0.2cm}
+\noindent\textbf{Digits}. Digits dataset is a copy of the famous benchmark MNIST in machine learning field. It is composed of hand-written numbers from zero to nine. The original dataset includes 1,797 samples and all ten classes. However, we select a subset of data, whose label is either zero or one, to convert a multi-class classification problem into a binary-class classification problem that fits our quantum circuits. The subset has 320 samples with 64 available features, where the ratio of number zero to number one is 1:1.
+
+\vspace{0.2cm}
+\noindent\textbf{Moons}. Moons is a generated dataset in scikit-learn with two features. Its visualization result is two interleaving half circles. The integer label, zero or one, indicates the class membership of each record. We generate 200 samples in experiments.
+
+\vspace{0.2cm}
+\noindent\textbf{Breast Cancer}. Breast Cancer dataset is a copy of Diagnostic Wisconsin Breast Cancer Data, which is a widely used binary classification dataset. The original data is a set of digitized images that shows a fine needle aspirate of a breast mass. Scikit-learn's version provides the structured data with 30 numeric features calculated from images. These features describe characteristics of cell nuclei, such as radius, symmetry, etc. The number of samples is 569. A malignant tumor belongs to class 0, while a benign one belongs to class 1.
+
+\vspace{0.2cm}
+Table \ref{tab:datasets} is a summary of datasets. Note that Moons dataset only has two availble features. Therefore, we use it in the classification task. Digits and Breast Cancer are used both in classification and circuit partitioning.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Summary of Datasets}
+    \label{tab:datasets}
+    \begin{tabular}{lllll}
+        \toprule
+        \textbf{Dataset} & \textbf{\#samples} & \textbf{\#class 0} & \textbf{\#class 1} & \textbf{\#features}\\
+        \midrule
+        Digits & 320 & 160 & 160 & 64\\
+        Moons & 200 & 100 & 100 & 2\\
+        Breast Cancer & 569 & 212 & 357 & 30\\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 % what datasets did you use, what types of networks do they represent, where did you obtain the data? did you do any processing? give a table describing data characteristics, such as number of nodes, edges, average degree, etc.
 
 \section{Experiments}
+\subsection{Experimental Setup}
+We preprocess features before feeding the data into the quantum circuit. Truncated singular value decomposition technique is appied to reduce dimensionality. Specifically, the number of dimensions of data is reduced to two in classification task, and four in quantum circuit partitioning. We also divide features by the maximum value to scale data. Aiming at assessing the generalization ability of the model, we perform five-fold cross validation in experiments. Average accuracy is calculated according to the performance on five folds and is selected as the metric. Two main hyperparameters in our quantum circuits are \textit{shots} and the learning rate. \textit{shots} is the number of repetitions of the quantum circuit. We set \textit{shots} to 100 in the pilot run and 1,000 in cross validation. The learning rate is optimized via the grid search method. We implement the quantum circuit with Qiskit. Table \ref{tab:software} summarizes the software environment of our experiments.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Summary of Software Environment}
+    \label{tab:software}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Item} & \textbf{Version} & \textbf{Function}\\
+        \midrule
+        Python & 3.9 & Programming language.\\
+        Qiskit & 0.22.3 & Quantum circuits.\\
+        scikit-learn & 1.2.0 & Datasets and preprocessing.\\
+        matplotlib & 3.6.2 & Visualization.\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+All experiments are deployed on a local server with an Intel(R) Core(TM) i7-10875H CPU. The source code of our project can be found on GitHub: \url{https://github.com/ShupeiLi/quantum-algorithms-project/tree/master/code}.
+
+\subsection{Results: Variational Quantum Classifier}
+Table \ref{tab:vqc-results} reports the experimental results of variational quantum classifier in binary-classification task.
+
+\begin{table}[!ht]
+    \centering
+    \caption{VQC Results}
+    \label{tab:vqc-results}
+    \begin{tabular}{lll}
+        \toprule
+        \textbf{Dataset} & \textbf{Avg. Accuracy} & \textbf{Learning Rate}\\
+        \midrule
+        Digits & 0.9563 & 0.1\\
+        Moons & 0.7850 & 0.01\\
+        Breast Cancer & 0.8209 & 0.1\\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Figure \ref{fig:contour} shows the visualization of test set in the fourth fold of cross validation. Red triangles represent samples from class 0, while blue triangles are samples from class 1. Contour lines with different colors indicate the decision boundaries of the quantum circuit. We highlight the misclassified samples with yellow circles.
+
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\textwidth]{./digits-2-cv4.png}
+        \caption{Contour Plot: Digits}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\textwidth]{./moons-cv4.png}
+        \caption{Contour Plot: Moons}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+        \includegraphics[width=\textwidth]{./cancer-cv4.png}
+        \caption{Contour Plot: Breast Cancer}
+    \end{subfigure}
+    \caption{Visualization of Test Set in the 4th Fold}
+    \label{fig:contour}
+\end{figure}
+
+According to Figure \ref{fig:contour}, the variational quantum classifier constructs relatively optimal decision boundaries on Digits dataset, with one misclassified class 0 sample and one misclassified class 1 sample in the fourth fold. However, the variational quantum classifier prefer the false negative error on Moons dataset, while has a bias towards the false positive error on Breast Cancer dataset. The intrinsic bias of classifier may be the cause of the relatively low average accuracy on Moons and Breast Cancer data.
+
+\subsection{Results: Quantum Circuit Partitioning}
+Table \ref{tab:qcp-results} summarizes the results of quantum circuit partitioning.
+
+\begin{table}[!ht]
+    \centering
+    \caption{Quantum Circuit Partitioning Results}
+    \label{tab:qcp-results}
+    \begin{tabular}{llll}
+       \toprule 
+       \textbf{Dataset} & \textbf{Circuit} & \textbf{Avg. Accuracy} & \textbf{Learning Rate}\\
+       \midrule
+       Digits & Large circuit & \textbf{0.9688} & 0.1\\
+              & Small circuits &  0.9656 & 0.01\\
+       Breast Cancer & Large circuit & \textbf{0.7612} & 0.01\\
+                     & Small circuits & 0.7314 & 0.1\\
+       \bottomrule
+    \end{tabular}
+\end{table}
+
+According to Table \ref{tab:qcp-results}, the large circuit with four qubits performs slghtly better than small subcircuits with two qubits on both datasets. It is consistent with the theory that the set of small subcircuits is an approximation of the original large circuit and is able to achieve the comparable performance. Experimental results support the validity of our quantum circuit partitioning strategy.
 
 % subsections on for example the experimental setup (which software, hardware and parameters did you choose), as well as the results of applying your approach to the data you described in preceding sections, leading to results that answer your research questions. you likely present some tables and figures
 
@@ -227,6 +335,7 @@ We evaluate the variational quantum classifier and the quantum circuit division 
 
 \begin{acks}
 % optional: acknowledgments, so people or organizations you wish to thank 
+We would like to thank Professor Vedran Dunjko and Course Assistants for the help during the project.
 \end{acks}
 
 
