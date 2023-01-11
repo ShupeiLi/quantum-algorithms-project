@@ -63,11 +63,7 @@ The remainder of the paper is structured as follows. Section 2 reviews previous 
 Our project is inspired by the variational quantum algorithms as well as the quantum circuit cutting. We provide an overview on related work in both research directions.
 
 \subsection{Variational Quantum Algorithms}
-<<<<<<< HEAD
-The variation quantum algorithm is a class of algorithms that imitates traditional methods used on classical computers. Generally, variation quantum algorithms only require a shallow quantum circuit, which can effectively alleviate the impact of noise on NISQ devices and obtain quantum advantages compared to the classical algorithms \cite{cerezo2021}. The core of variation quantum algorithms is an ansatz with a set of trainable parameters. During the training process, data is transformed and fed into the ansatz. And the cost is calculated according to outputs of the ansatz and real labels. The objective of training is minimizing the cost of a pre-defined function.
-=======
 The core of variational quantum algorithms is an ansatz with a set of trainable parameters. During the training process, data is transformed and fed into the ansatz. And the cost is calculated according to outputs of the ansatz and real labels. The objective of training is minimizing the cost of a pre-defined function.
->>>>>>> c70e0c88643d43f88f5e31d7f076e3bd74125458
 
 Variational quantum algorithms have broad application prospects in various fields. In applied mathematics field, Huang et al. \cite{vqa-huang} decompose the transformation matrix into a linear combination of unitaries and optimize the cost function via the variational quantum method. LaRose et al. \cite{vqa-larose} proposed a diagonalization algorithm for principal component analysis, where variational circuit is applied to estimate eigenvalues and eigenvectors. In program compilation field, Khatri et al. \cite{vqa-qc} designed a hybrid algorithm that utilizes the power of both classical and quantum computers to accelerate the compilation of quantum programs. There have also been quantum implementations of machine learning frameworks with variational quantum circuits, such as neural networks for reinforcement learning \cite{vqa-rl}, knowledge graphi \cite{vqa-kg}, etc. In this projetc, we apply the variational quantum circuit as a classifier in supervised learning.
 
