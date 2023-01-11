@@ -14,7 +14,7 @@
 
 \begin{document}
 
-\title{Your Original and Relevant Course Project Title}
+\title{Research on the Variational Quantum Circuit and Quantum Circuit Partitioning}
 \subtitle{Quantum Algorithms --- Course paper} % do not modify thi
 
 \author{Chenyu Shi}
@@ -84,15 +84,15 @@ Variational Quantum Classifier(VQC) is a kind of parameterized quantum circuit u
 \subsubsection{Data Encoding}\hfill\\
 As what we have discussed above, VQC attempts to apply parameterized quantum circuit as its learning model. However, nowadays most of data is stored in classical computers which quantum circuit cannot directly access to. Hence, it's necessary to encode classical data into quantum state that can be preocessed by quantum circuit at first. 
 
-There are many basic methods to achieve this encoding preocess, such as basis encoding, amplitude encoding and angle encoding. Besides, several higher order encoding methods which combines different basic encoding methods are studied as well. In this paper, our proposal data encoding method is xxxx, one of the most popular higher order encoding methods. The specific quantum circuit $U_{enc}(x)$ is shown in Figure \ref{fig:encoding} (2-qubit case). As we can see, in this 2-qubit example, the encoding circuit is simplely composed of two Hamdamard gates, three phase gates with the components of the input data $x$ as their parameter and two $CNOT$ gates as the entangling gate. Due to difference of the input data components of each class, the states produced by this circuit will be different as well. In addition, because of the use of entangling gate, the $CNOT$, the state on each qubit will have interaction. Besides, the initial quantum state of each qubit is $\ket{0}$ on account of the requirement of real quantum computers.
+There are many basic methods to achieve this encoding preocess, such as basis encoding, amplitude encoding and angle encoding. Besides, several higher order encoding methods which combines different basic encoding methods are studied as well. In this paper, our proposal data encoding method is Pauli feature map, one of the most popular higher order encoding methods. The specific quantum circuit $U_{enc}(x)$ is shown in Figure \ref{fig:encoding} (2-qubit case). As we can see, in this 2-qubit example, the encoding circuit is simplely composed of two Hamdamard gates, three phase gates with the components of the input data $x$ as their parameter and two $CNOT$ gates as the entangling gate. Due to difference of the input data components of each class, the states produced by this circuit will be different as well. In addition, because of the use of entangling gate, the $CNOT$, the state on each qubit will have interaction. Besides, the initial quantum state of each qubit is $\ket{0}$ on account of the requirement of real quantum computers.
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=0.48\textwidth]{encode.png}
-	\caption{Data encoding circuit: {\small \textnormal{Specific quantum circuit of data encoding in 2-qubit case. This circuit is composed of Hamdamard gates, phase gates, and entangling gate($CNOT$).}} }
+	\caption{Data encoding circuit: {\small \textnormal{Specific quantum circuit of data encoding in 2-qubit case. This circuit is composed of Hamdamard gates, phase gates, and entangling gate ($CNOT$).}} }
 	\label{fig:encoding}
 \end{figure}
 \subsubsection{Variational Model}\hfill\\
-Variational model is a quantum circuit with trainalbe parameters. During the training process, these parameters will be updated to improve the model's performance. There are various kinds of variational model can be applied in VQC. In this paper, the circuit of our variational model $U_{train}(\theta)$is shown in Figure \ref{fig:variational} (2-qubit case). This 2-qubit example is composed by four y-axis rotation gates parameterized by $\theta$ which is the parameter set to be trained, and one controlled Z gate as the entangling gate. After training, these parameterized rotation gates along with entangling gate can have the ability to convert input states of diverse classes to different output states which can be measured to make a final prediction.   
+Variational model is a quantum circuit with trainable parameters. During the training process, these parameters will be updated to improve the model's performance. There are various kinds of variational model can be applied in VQC. In this paper, the circuit of our variational model $U_{train}(\theta)$is shown in Figure \ref{fig:variational} (2-qubit case). This 2-qubit example is composed by four y-axis rotation gates parameterized by $\theta$ which is the parameter set to be trained, and one controlled Z gate as the entangling gate. After training, these parameterized rotation gates along with entangling gate can have the ability to convert input states of diverse classes to different output states which can be measured to make a final prediction.   
 \begin{figure}[!ht]
 	\centering
 	\includegraphics[width=0.48\textwidth]{vari.png}
@@ -172,7 +172,7 @@ Finally, our VQC circuit (in 2-qubit case) is shown in Figure \ref{fig:whole}. I
 \end{figure*}
 
 \subsection{Quantum Circuit Partitioning}
-Quantum circuit partitioning is technique to evaluate a large quantum circuit only using smaller quantum computer with fewer quantum qubits \cite{marshall2022high}. Many quantum algorithms require more qubits than nowaday quantum computer can really provide, which is a tremendous limitation for designing quantum algorithm. The quantum circuit partition method provides a practical solution to this problem. It divides a larger quantum circuit into several smaller parts which can be run and evaluate individually. Then these results are combined in a polynomial to replicate the output of the larger machine. Various methods of circuit partitioning have been developed to simulate large quantum circuit with fewer qubits, though these methods require more evaluation running times on these divided smaller circuits. In this paper, we mainly apply a method which is proposed in paper \cite{marshall2022high}.
+Quantum circuit partitioning is a technique to evaluate a large quantum circuit only using smaller quantum computers with fewer quantum qubits \cite{marshall2022high}. Many quantum algorithms require more qubits than nowaday quantum computer can really provide, which is a tremendous limitation for designing quantum algorithm. The quantum circuit partition method provides a practical solution to this problem. It divides a larger quantum circuit into several smaller parts which can be run and evaluated individually. Then these results are combined in a polynomial to replicate the output of the larger machine. Various methods of circuit partitioning have been developed to simulate large quantum circuit with fewer qubits, though these methods require more evaluation running times on these divided smaller circuits. In this paper, we mainly apply a method which is proposed in paper \cite{marshall2022high}.
 
 The method in paper \cite{marshall2022high} divides the larger circuit into smaller blocks, and for each block of partition, a new parameterized unitary is added with different parameters $\xi$. Besides, new parameters $\lambda$ are used to combine the observation results of some running of the circuit. In mathematic form of this process can be formulated as:
 $$f_{\theta,\xi,\lambda}(x)=\sum_{i\in [L]}\lambda_i\prod_{k\in [K]}\bra{0}U^{k\dagger}(\theta,x,\xi_{i,k})M_kU^k(\theta,x,\xi_{i,k+K})\ket{0}$$
@@ -187,11 +187,10 @@ This formula looks rather complicated, but the key point of it can be viewed in 
 \end{figure}
 
 And one remarkable thing is that we shouldn't initialize the parameters with the same values. Our final result is a weighted sum. For notation simplicity, we write the above formula in this form:
-$$f_(x)=\sum \lambda_i g_{\theta i, \xi i}(x)$$.
+$$f_(x)=\sum \lambda_i g_{\theta i, \xi i}(x).$$
+where $g(\cdot)$ represents the multiplication result of each block. Notice that if all parameters are initialized to the same value, the weighted sum becomes meaningless because all $g_{\theta i, \xi i}(x)$ will have same results as well. Besides, the gradients will also be the same, which means this weighted sum actually is equivalent to a single $g(x)$. And it's obviously not the expected result, so we are supposed to initialize the circuits with different parameters and weights.
 
-where $g(\cdot)$ represents the multiplication result of each block. Notice that if all parameters are initialized as a same value, the weighted sum becomes meaningless because all $g_{\theta i, \xi i}(x)$ will have same results as well. Besides, the gradients will also be the same, which means this weighted sum actually is equivalent to a single $g(x)$. And it's obviously not the expected result, so we are supposed to initialize the circuits with different parameters and weights.
-
-Finally, our circuit used in experiments are shown in Figure \ref{fig:cutting}, which is an example of cutting 4-qubit circuit into 2-qubit. The experimental results will be show and discussed in section 5.
+Finally, our circuits used in experiments are shown in Figure \ref{fig:cutting}, which is an example of cutting 4-qubit circuit into 2-qubit. The experimental results will be show and discussed in Section 5.
 \begin{figure*}[!ht]
 	\begin{minipage}[t]{0.9\textwidth}%并排放两张图片，每张占页面的0.5，下同。
 		\centering
@@ -300,7 +299,7 @@ Figure \ref{fig:contour} shows the visualization of test set in the fourth fold 
         \includegraphics[width=\textwidth]{./cancer-cv4.png}
         \caption{Contour Plot: Breast Cancer}
     \end{subfigure}
-    \caption{Visualization of Test Set in the 4th Fold: \textnormal{Draw samples of the test set in contour plots. Red triangles and blue triangles are class 0 and class 1 respectively.}}
+    \caption{Visualization of test set in the 4th fold: \textnormal{Draw samples of the test set in contour plots. Red triangles and blue triangles are class 0 and class 1 respectively.}}
     \label{fig:contour}
 \end{figure*}
 
@@ -332,9 +331,9 @@ According to Table \ref{tab:qcp-results}, the large circuit with four qubits per
 \section{Discussion}
 In this section, we make a discussion and conclusion of the theoretical analysis and experimental results.
 
-For variational quantum classifier, we could see it works well on most datasets, which means VQC is actually a valid classifer can be applied to various classification tasks. However, on dataset such as Moons, VQC only has a not bad performance compared to other datasets in the experiment so the performance of VQC can be influenced by the datasets as well. Besides, directly input original data often requires large number of qubits in VQC, which is a great limitation to today's quantum computer. Therefore, we have to use external dimensionality reduction or quantum circuit partitioning that has been discussed in the other parts of our experiments.
+For variational quantum classifier, we could see it works well on most datasets, which means VQC is actually a valid classifer that can be applied to various classification tasks. However, on dataset such as Moons, VQC only has a not bad performance compared to other datasets in the experiment so the performance of VQC can be influenced by the datasets as well. Besides, inputting original data directly often requires large number of qubits in VQC, which is a great limitation to today's quantum computer. Therefore, we have to use external dimensionality reduction or quantum circuit partitioning that has been discussed in the other parts of our experiments.
 
-Quantum circuit partitioning works well in our experiments as well. Smaller circuits with fewer qubits can indeed simulate a large circuit such as VQC well. Additionally, the smaller circuits have a relatively good performance on test sets compared to training sets, which means this partitioning method actually has a generalisation ability. Nevertheless, simulating a large circuit with smaller circuits requires more running budget to repeat and evaluate smaller circuits for more times, which is great limitation of quantum circuit partitioning. 
+Quantum circuit partitioning works well in our experiments as well. Smaller circuits with fewer qubits can indeed simulate a large circuit such as VQC well. Additionally, the smaller circuits have a relatively good performance on test sets compared to training sets, which means this partitioning method actually has a generalization ability. Nevertheless, simulating a large circuit with smaller circuits requires more running budget to repeat and evaluate smaller circuits for more times, which is a great limitation of quantum circuit partitioning. 
 % summarize in at most one column the main results of the paper, stating how you addressed the problem statement and how the experiments help understand whether  the approach works (or not). end with one or two short suggestions for future work. 
 
 \begin{acks}
