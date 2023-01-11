@@ -286,7 +286,7 @@ Table \ref{tab:vqc-results} reports the experimental results of variational quan
 
 Figure \ref{fig:contour} shows the visualization of test set in the fourth fold of cross validation. Red triangles represent samples from class 0, while blue triangles are samples from class 1. Contour lines with different colors indicate the decision boundaries of the quantum circuit. We highlight the misclassified samples with yellow circles.
 
-\begin{figure}[!ht]
+\begin{figure*}[!ht]
     \centering
     \begin{subfigure}{0.45\textwidth}
         \includegraphics[width=\textwidth]{./digits-2-cv4.png}
@@ -302,7 +302,7 @@ Figure \ref{fig:contour} shows the visualization of test set in the fourth fold 
     \end{subfigure}
     \caption{Visualization of Test Set in the 4th Fold: \textnormal{Draw samples of the test set in contour plots. Red triangles and blue triangles are class 0 and class 1 respectively.}}
     \label{fig:contour}
-\end{figure}
+\end{figure*}
 
 According to Figure \ref{fig:contour}, the variational quantum classifier constructs relatively optimal decision boundaries on Digits dataset, with one misclassified class 0 sample and one misclassified class 1 sample in the fourth fold. However, the variational quantum classifier prefers the false negative error on Moons dataset, while has a bias towards the false positive error on Breast Cancer dataset. The intrinsic bias of classifier may be the cause of the relatively low average accuracy on Moons and Breast Cancer data.
 
