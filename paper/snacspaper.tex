@@ -38,7 +38,7 @@
 \keywords{keyword1, keyword2, keyword3, social network analysis, network science}
 
 \begin{abstract}
-
+We implement the variational quantum classifier and simulate the large variational quantum circuit with a set of small subcircuits in our project. We evaluate the performance of variational circuits on three open source datasets by performing the five-fold cross validation. Experimental results support the effectiveness of the variational quantum classifier and the validity of the quantum circuit partitioning strategy.
 % the abstract summarizes the entire paper: context, problem, solution, approach, data, experimental results, conclusion and real-world implications. but, shortly, so in half a column or so.
 
 \end{abstract}
@@ -219,7 +219,7 @@ We evaluate the variational quantum classifier and the quantum circuit partition
 \noindent\textbf{Digits}. Digits dataset is a copy of the famous benchmark MNIST in machine learning field. It is composed of hand-written numbers from zero to nine. The original dataset includes 1,797 samples and all ten classes. However, we select a subset of data, whose label is either zero or one, to convert a multi-class classification problem into a binary-class classification problem that fits our quantum circuits. The subset has 320 samples with 64 available features, where the ratio of number zero to number one is 1:1.
 
 \vspace{0.2cm}
-\noindent\textbf{Moons}. Moons is a generated dataset in scikit-learn with two features. Its visualization result is two interleaving half circles. The integer label, zero or one, indicates the class membership of each record. We generate 200 samples in experiments.
+\noindent\textbf{Moons}. Moons is a generated dataset in scikit-learn with two features. Its visualization result is two interleaving half circles. The integer label, zero or one, indicates the class membership of each record. We generate 200 samples in experiments. The random state is set to 42 to ensure the reproducibility.
 
 \vspace{0.2cm}
 \noindent\textbf{Breast Cancer}. Breast Cancer dataset is a copy of Diagnostic Wisconsin Breast Cancer Data, which is a widely used binary classification dataset. The original data is a set of digitized images that shows a fine needle aspirate of a breast mass. Scikit-learn's version provides the structured data with 30 numeric features calculated from images. These features describe characteristics of cell nuclei, such as radius, symmetry, etc. The number of samples is 569. A malignant tumor belongs to class 0, while a benign one belongs to class 1.
@@ -304,7 +304,7 @@ Figure \ref{fig:contour} shows the visualization of test set in the fourth fold 
     \label{fig:contour}
 \end{figure}
 
-According to Figure \ref{fig:contour}, the variational quantum classifier constructs relatively optimal decision boundaries on Digits dataset, with one misclassified class 0 sample and one misclassified class 1 sample in the fourth fold. However, the variational quantum classifier prefer the false negative error on Moons dataset, while has a bias towards the false positive error on Breast Cancer dataset. The intrinsic bias of classifier may be the cause of the relatively low average accuracy on Moons and Breast Cancer data.
+According to Figure \ref{fig:contour}, the variational quantum classifier constructs relatively optimal decision boundaries on Digits dataset, with one misclassified class 0 sample and one misclassified class 1 sample in the fourth fold. However, the variational quantum classifier prefers the false negative error on Moons dataset, while has a bias towards the false positive error on Breast Cancer dataset. The intrinsic bias of classifier may be the cause of the relatively low average accuracy on Moons and Breast Cancer data.
 
 \subsection{Results: Quantum Circuit Partitioning}
 Table \ref{tab:qcp-results} summarizes the results of quantum circuit partitioning.
@@ -325,7 +325,7 @@ Table \ref{tab:qcp-results} summarizes the results of quantum circuit partitioni
     \end{tabular}
 \end{table}
 
-According to Table \ref{tab:qcp-results}, the large circuit with four qubits performs slghtly better than small subcircuits with two qubits on both datasets. It is consistent with the theory that the set of small subcircuits is an approximation of the original large circuit and is able to achieve the comparable performance. Experimental results support the validity of our quantum circuit partitioning strategy.
+According to Table \ref{tab:qcp-results}, the large circuit with four qubits performs slghtly better than small subcircuits with two qubits on both datasets. It is consistent with the theory that the set of small subcircuits is an approximation of the original large circuit and is able to achieve the comparable performance. However, the runtime of small circuits is longer than that of the large circuit during the experiment, which is one disadvantage of reducing available qubits. Experimental results support the validity of our quantum circuit partitioning strategy.
 
 % subsections on for example the experimental setup (which software, hardware and parameters did you choose), as well as the results of applying your approach to the data you described in preceding sections, leading to results that answer your research questions. you likely present some tables and figures
 
