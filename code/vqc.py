@@ -9,6 +9,7 @@ from data import *
 from qiskit import QuantumCircuit, transpile
 from qiskit.circuit.library import TwoLocal, PauliFeatureMap
 from qiskit.providers.aer import QasmSimulator
+from qiskit.circuit import Parameter
 
 
 class VQC():
@@ -43,17 +44,31 @@ class VQC():
         # Initialize the quantum circuit
         self.pauli_feature_map = self.set_feature_map()
         self.ansatz = self.set_ansatz()
-        self.circuit = self.construct_circuit(plot=True)
+        self.circuit = self.construct_circuit()
 
         # Initialize parameters in the ansatz
         self.params = np.random.random(self.ansatz.num_parameters)
 
     def set_feature_map(self, plot=False):
         """Feature map circuit."""
-        pauli_feature_map = PauliFeatureMap(
-                feature_dimension=self.n_qubits, 
-                reps=self.feature_reps, 
-                paulis=self.paulis).decompose()
+        if self.n_qubits == 4:
+            pauli_feature_map = QuantumCircuit(4)
+            params = [Parameter(f'x[{i}]') for i in range(4)]
+            for i in range(4):
+                pauli_feature_map.h(i)
+                pauli_feature_map.p(2 * params[i], i)
+            pauli_feature_map.cx(0, 1)
+            pauli_feature_map.p(2 * (np.pi - params[0]) * (np.pi - params[1]), 1)
+            pauli_feature_map.cx(0, 1)
+            pauli_feature_map.cx(1, 2)
+            pauli_feature_map.cx(2, 3)
+            pauli_feature_map.p(2 * (np.pi - params[2]) * (np.pi - params[3]), 3)
+            pauli_feature_map.cx(2, 3)
+        else:
+            pauli_feature_map = PauliFeatureMap(
+                    feature_dimension=self.n_qubits, 
+                    reps=self.feature_reps, 
+                    paulis=self.paulis).decompose()
         if plot:
             pauli_feature_map.draw(output="mpl")
             plt.show()
@@ -191,7 +206,7 @@ class VQC():
 def five_fold_cross_validation(data, n_qubits=2, n_bits=2, visual=True):
     cv_lst = cross_validation_split(data, n_folds=5)
     for i in range(len(cv_lst)):
-        model = VQC(cv_lst[i], n_qubits=n_qubits, n_bits=n_bits, epochs=3, n_shots=1000, lr=0.1)
+        model = VQC(cv_lst[i], n_qubits=n_qubits, n_bits=n_bits, epochs=3, n_shots=1000, lr=0.01)
         model.main()
         if visual:
             model.visualization(model.circuit)
